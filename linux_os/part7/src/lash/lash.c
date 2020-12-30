@@ -297,19 +297,12 @@ bool process_command(char *cmd) {
                 
                 free(argv);
                 _exit(ret);
-                printf("AFTER EXIT\n");
+                
                 return false;
-            } else {
-                siginfo_t info;
-                int status = 0;
-
-                int ret = sys_waitid(P_PID, pid, &info, WEXITED);
-                printf("waited; %d\n", ret);
             }
         }
     }
 
-    printf("Freeing...\n");
     free(argv);
     return true;
 }

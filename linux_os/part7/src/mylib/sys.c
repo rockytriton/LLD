@@ -84,7 +84,3 @@ int sys_stat(const char *pathname, struct stat *statbuf) {
 int sys_close(unsigned long fd) {
     return _syscall(SYS_close, fd, 0, 0, 0, 0, 0);
 }
-
-int sys_waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options) {
-    return _syscall(SYS_waitid, (void*)idtype, id, infop, options, 0, 0);
-}

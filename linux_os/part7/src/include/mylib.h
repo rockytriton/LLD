@@ -48,5 +48,3 @@ extern void free(void *addr);
 
 extern int sys_stat(const char *pathname, struct stat *statbuf);
 extern int sys_close(unsigned long fd);
-
-extern int sys_waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
