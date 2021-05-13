@@ -14,10 +14,15 @@ void console_error(logger *self, char *str) {
     fprintf(stderr, "%s\n", str);
 }
 
+void console_close(logger *self) {
+
+}
+
 log_interface console_interface = {
     .init = console_init,
     .info = console_info,
-    .error = console_error
+    .error = console_error,
+    .close = console_close
 };
 
 logger conlog = {

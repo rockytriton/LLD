@@ -5,6 +5,7 @@ pico_sdk_init()
 
 add_executable(test 
     test.c
+    test.S
 )
 
 pico_enable_stdio_usb(test 1)

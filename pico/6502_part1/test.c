@@ -95,8 +95,24 @@ void scan_bus() {
     sleep_ms(2000);
 }
 
+void asm_test();
+void asm_test2();
+
+int nothing() {
+    return 5;
+}
+
 int main() {
-    stdio_init_all();
+    int counter = 0;
+
+    //asm_test();
+
+    counter++;
+    counter++;
+    counter = nothing();
+    counter++;
+
+    //asm_test2();
 
     i2c_init(I2C_PORT, 100 * 1000);
 
@@ -118,6 +134,8 @@ int main() {
         gpio_init(addr_pins[i]);
         gpio_set_dir(addr_pins[i], GPIO_IN);
     }
+
+    stdio_init_all();
 
     scan_bus();
 

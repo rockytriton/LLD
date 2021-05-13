@@ -7,6 +7,18 @@
 #define ILOG(log, msg) (log)->interface->info(log, msg)
 #define ELOG(log, msg) (log)->interface->error(log, msg)
 
+void do_something(logger *log) {
+    //...
+    ILOG(log, "Part 1");
+    //...
+    ILOG(log, "Part 2");
+    //...
+
+    if (1) {
+        ELOG(log, "oops");
+    }
+}
+
 int main() {
     //
     //console log sample
@@ -18,7 +30,7 @@ int main() {
 
     //long winded usage
     conlog.interface->info(&conlog, "Info message 1");
-    conlog.interface->info(&conlog, "Error message 1");
+    conlog.interface->error(&conlog, "Error message 1");
 
     //shorter usage
     clog->info((void *)clog, "Info message 2");
@@ -59,5 +71,10 @@ int main() {
     flog1->close(&f1);
     flog2->close(&f2);
 
+    do_something(&f1);
+
     return 0;
 }
+
+
+
