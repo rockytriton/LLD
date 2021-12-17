@@ -5,10 +5,10 @@ dtoverlay=miniuart-bt
 #dtoverlay=vc4-kms-v3d
 #gpu_mem=128
 
-armstub=armstub-new.bin
+#armstub=armstub-new.bin
 
-#kernel_old=1
-#disable_commandline_tags=1
+kernel_old=1
+disable_commandline_tags=1
 
 
 [pi4]
