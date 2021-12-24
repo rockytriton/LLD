@@ -49,50 +49,32 @@ static u32 *bg8_buffer;
 #define MB (1024 * 1024)
 
 //hack for not having an allocate function yet...
-#define BG32_MEM_LOCATION ((LOW_MEMORY + (2 * MB)) + VA_START)
+#define BG32_MEM_LOCATION (LOW_MEMORY + (10 * MB))
 #define BG8_MEM_LOCATION (BG32_MEM_LOCATION + (10 * MB))
 #define VB_MEM_LOCATION (BG8_MEM_LOCATION + (4 * MB))
 
 void video_init() {
-    printf("AA: %lX\n", BG32_MEM_LOCATION);
-
     dma = dma_open_channel(CT_NORMAL);
     vid_buffer = (u8 *)VB_MEM_LOCATION;
 
     printf("DMA CHANNEL: %d\n", dma->channel);
-    printf("VID BUFF: %lX\n", vid_buffer);
-
-    printf("A: %lX, B: %lX\n", VA_START, (LOW_MEMORY + (2 * MB)));
-    printf("C: %lX, D: %lX\n", LOW_MEMORY , (2 * MB));
-    printf("E: %lX\n", (LOW_MEMORY + (2 * MB)) + VA_START);
-    printf("F: %lX\n", (u32 *)((LOW_MEMORY + (2 * MB)) + VA_START));
-    printf("G: %lX\n", (u8 *)((LOW_MEMORY + (2 * MB)) + VA_START));
+    printf("VID BUFF: %X\n", vid_buffer);
 
     bg32_buffer = (u32 *)BG32_MEM_LOCATION;
     bg8_buffer = (u32 *)BG8_MEM_LOCATION;
 
-    printf("bg32_buffer BUFF: %lX - %lX\n", bg32_buffer, BG32_MEM_LOCATION);
-
-    bg32_buffer = (u32 *)((LOW_MEMORY + (2 * MB)) + VA_START);
-
-    printf("Setting bg color\n");
     for (int i=0; i<(10 * MB) / 4; i++) {
-        //printf("Setting at index: %d\n", i);
-
         bg32_buffer[i] = BACK_COLOR;
     }
 
-    printf("Setting bg8 buffer\n");
     for (int i=0; i<(4 * MB) / 4; i++) {
         bg8_buffer[i] = 0x01010101;
     }
-
-    printf("Init complete\n");
 }
 
 static bool use_dma = false;
 
-#define BUS_ADDR(x) ((((u64)x | 0x40000000) & ~0xC0000000) + VA_START)
+#define BUS_ADDR(x) (((u64)x | 0x40000000) & ~0xC0000000)
 
 #define FRAMEBUFFER ((volatile u8 *)BUS_ADDR(fb_req.buff.base))
 #define DMABUFFER ((volatile u8 *)vid_buffer)
@@ -190,7 +172,7 @@ void video_set_resolution(u32 xres, u32 yres, u32 bpp) {
     //sets the actual resolution
     mailbox_process((mailbox_tag *)&fb_req, sizeof(fb_req));
 
-    printf("Allocated Buffer: %lX - %d - %d - %lX\n", fb_req.buff.base, fb_req.buff.screen_size, fb_req.depth.bpp, FRAMEBUFFER);
+    printf("Allocated Buffer: %X - %d - %d\n", fb_req.buff.base, fb_req.buff.screen_size, fb_req.depth.bpp);
 
     if (bpp == 8) {
         mailbox_process((mailbox_tag *)&palette, sizeof(palette));
@@ -206,26 +188,22 @@ void video_set_resolution(u32 xres, u32 yres, u32 bpp) {
         if (fb_req.depth.bpp == 32) {
 
             if (!use_dma) {
-                printf("Filling Non DMA 1\n");
                 u32 *buff = (u32 *)FRAMEBUFFER;
                 for (int i=0; i<fb_req.buff.screen_size / 4; i++) {
                     buff[i] = bg32_buffer[i];
                 }
             } else {
-                printf("Filling DMA 1\n");
                 do_dma(BUS_ADDR(vid_buffer), bg32_buffer, fb_req.buff.screen_size);
             }
         }
         else if (fb_req.depth.bpp == 8) {
 
             if (!use_dma) {
-                printf("Filling DMA 2\n");
                 u32 *buff = (u32 *)FRAMEBUFFER;
                 for (int i=0; i<fb_req.buff.screen_size / 4; i++) {
                     buff[i] = bg8_buffer[i];
                 }
             } else {
-                printf("Filling DMA 2\n");
                 do_dma(BUS_ADDR(vid_buffer), bg8_buffer, fb_req.buff.screen_size);
             }
         }

@@ -9,3 +9,6 @@ typedef uint32_t u32;
 typedef uint64_t u64;
 
 typedef volatile u32 reg32;
+
+#define DataSyncBarrier()	asm volatile ("dsb sy" ::: "memory")
+#define DataMemBarrier() 	asm volatile ("dmb sy" ::: "memory")

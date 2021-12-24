@@ -30,7 +30,6 @@ static u16 allocate_channel(u32 channel) {
     return CT_NONE;
 }
 
-#define MB (1024 * 1024)
 dma_channel *dma_open_channel(u32 channel) {
     u32 _channel = allocate_channel(channel);
 
@@ -43,10 +42,7 @@ dma_channel *dma_open_channel(u32 channel) {
     dma->channel = _channel;
 
     //LOW_MEMORY = bottom of RAM...  Hack for now since no allocate function
-    dma->block = (dma_control_block *)(((LOW_MEMORY + (2 * MB)) + VA_START + 31) & ~31);
-
-    printf("dma_open_channel: 2.2: %lX\n", dma->block);
-
+    dma->block = (dma_control_block *)((LOW_MEMORY + 31) & ~31);
     dma->block->res[0] = 0;
     dma->block->res[1] = 0;
 

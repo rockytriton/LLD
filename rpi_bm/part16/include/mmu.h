@@ -1,5 +1,4 @@
-#ifndef _MMU_H
-#define _MMU_H
+#pragma once
 
 #define MM_TYPE_PAGE_TABLE		0x3
 #define MM_TYPE_PAGE 			0x3
@@ -20,8 +19,6 @@
 #define MT_DEVICE_nGnRnE_FLAGS		0x00
 #define MT_NORMAL_NC_FLAGS  		0x44
 #define MAIR_VALUE			(MT_DEVICE_nGnRnE_FLAGS << (8 * MT_DEVICE_nGnRnE)) | (MT_NORMAL_NC_FLAGS << (8 * MT_NORMAL_NC))
-
-
 
 #define ATTRINDX_NORMAL		0
 #define ATTRINDX_DEVICE		1
@@ -48,5 +45,3 @@
 #define SCTLR_EL1_C		(1 << 2)
 #define SCTLR_EL1_A		(1 << 1)
 #define SCTLR_EL1_M		(1 << 0)
-
-#endif

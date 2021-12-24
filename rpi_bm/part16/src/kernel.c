@@ -8,7 +8,6 @@
 #include "led_display.h"
 #include "mailbox.h"
 #include "video.h"
-#include "peripherals/base.h"
 
 void putc(void *p, char c) {
     if (c == '\n') {
@@ -20,48 +19,22 @@ void putc(void *p, char c) {
 
 u32 get_el();
 
-/*
-#define PACKED __attribute((__packed__))
-#define BOOT_SIGNATURE 0xAA55
+struct align_check1 {
+    u8 a;
+    u8 b;
+    u8 c;
+    //u8 padding;
+    u32 d;
+};
 
-volatile struct chs_address {
-    u8 head;
-    u8 sector : 6;
-    u8 cylinder_hi : 2;
-    u8 cylinder_lo;
-} PACKED;
-
-volatile struct partition_entry {
-    u8 status;
-    u8 first_head;
-    u8 first_sector : 6;
-    u8 first_cylinder_hi : 2;
-    u8 first_cylinder_lo;
-
-    u8 type;
-    u8 last_head;
-    u8 last_sector : 6;
-    u8 last_cylinder_hi : 2;
-    u8 last_cylinder_lo;
-
-    u32 first_lba_sector;
-    u32 num_sectors;
-
-} PACKED;
-
-volatile struct master_boot_record {
-    u8 boot_code[0x1BE];
-    struct partition_entry partitions[4];
-    u16 boot_signature;
-} PACKED;
-
-volatile struct align_check {
+struct align_check2 {
     u8 a;
     u8 b;
     u8 c;
     u32 d;
 } PACKED;
-*/
+
+u8 buffer[] = {0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70};
 
 void kernel_main() {
     uart_init();
@@ -80,25 +53,32 @@ void kernel_main() {
 #if RPI_VERSION == 4
     printf("\tBoard: Raspberry PI 4\n");
 #endif
-/*
+
+#if INIT_MMU == 1
+    printf("Initialized MMU\n");
+#endif
+
     printf("ALIGN CHECK\n");
 
-    struct align_check ac;
-    ac.d = 32;
+    struct align_check1 ac1;
+    memcpy(&ac1, buffer, 7);
+    printf("UNPACKED: A: %X, B: %X, C: %X, D: %X\n", ac1.a, ac1.b, ac1.c, ac1.d);
 
-    printf("ACD: %d\n", ac.d);
+    struct align_check2 ac2;
+    memcpy(&ac2, buffer, 7);
+    printf("PACKED: A: %X, B: %X, C: %X, D: %X\n", ac2.a, ac2.b, ac2.c, ac2.d);
 
-    printf("BOOT SIG CHECK\n");
+    void *p1 = get_free_pages(10);
+    void *p2 = get_free_pages(4);
+    void *p3 = allocate_memory(20 * 4096 + 1);
 
-    struct master_boot_record mbr;
-    mbr.boot_signature = BOOT_SIGNATURE;
-    mbr.partitions[0].first_lba_sector = 2112;
+    free_memory(p1);
+    free_memory(p2);
+    free_memory(p3);
 
-    printf("LBA: %d\n", mbr.partitions[0].first_lba_sector);
-*/
+    timer_sleep(5000);
+
     printf("\nException Level: %d\n", get_el());
-
-    printf("Base Address: %lX\n", PBASE);
 
     printf("Sleeping 200 ms...\n");
     timer_sleep(200);
@@ -151,8 +131,6 @@ void kernel_main() {
     u32 max_temp = 0;
 
     mailbox_generic_command(RPI_FIRMWARE_GET_MAX_TEMPERATURE, 0, &max_temp);
-
-    printf("Got max temp: %d\n", max_temp);
 
     //Do video...
     video_init();

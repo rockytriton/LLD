@@ -18,4 +18,4 @@ stub_version:
 .org 0xfc
 .globl kernel_entry32
 kernel_entry32:
-    .word 0xffff000000000000
+    .word 0x0

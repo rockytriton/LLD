@@ -9,3 +9,5 @@ void *memcpy(void *dest, const void *src, u32 n);
 #define GPU_MEM_BASE	GPU_UNCACHED_BASE
 
 #define BUS_ADDRESS(addr)	(((addr) & ~0xC0000000) | GPU_MEM_BASE)
+
+void *get_free_pages(int num_pages);

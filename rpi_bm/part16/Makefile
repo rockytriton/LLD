@@ -4,7 +4,9 @@ BOOTMNT ?= /media/parallels/boot
 
 ARMGNU ?= aarch64-linux-gnu
 
-COPS = -DRPI_VERSION=$(RPI_VERSION) -Wall -nostdlib -nostartfiles -ffreestanding \
+INIT_MMU ?= 1
+
+COPS = -DRPI_VERSION=$(RPI_VERSION) -DINIT_MMU=$(INIT_MMU) -Wall -nostdlib -nostartfiles -ffreestanding \
 	   -Iinclude -mgeneral-regs-only
 
 ASMOPS = -Iinclude
