@@ -1,0 +1,9 @@
+arm_64bit=1
+uart_2ndstage=1
+dtoverlay=miniuart-bt
+disable_commandline_tags=1
+
+armstub=armstub-new.bin
+
+[pi4]
+kernel=kernel8-rpi4.img
