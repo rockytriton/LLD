@@ -174,7 +174,7 @@ void *malloc(size_t in_size) {
 
     if (in_size >= MMAP_THRESHOLD) {
         //not going to use heap, actually use mmap instead...
-        uint8_t *p = sys_mmap(NULL, in_size + HEADER_SIZE_MASK, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        uint8_t *p = sys_mmap(NULL, in_size + HEADER_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         chunk_set_size(p, in_size);
         chunk_set_flags(p, FLAG_MEM_MAPPED | FLAG_MEM_ALLOCATED);
 
